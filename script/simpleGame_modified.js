@@ -1,3 +1,4 @@
+
 /* simpleGame.js
    a very basic game library for the canvas tag
    loosely based on Python gameEngine
@@ -17,7 +18,6 @@ var virtKeys = false;
 
 function Sprite(scene, imageFile, width, height){
     //core class for game engine
-  this.scene = scene;
   this.canvas = scene.canvas;
   this.context = this.canvas.getContext("2d");
   this.image = new Image();
@@ -56,7 +56,7 @@ function Sprite(scene, imageFile, width, height){
   this.setX = function (nx){ this.x = nx; }
   this.setY = function (ny){ this.y = ny; }
   this.setChangeX = function (ndx){ this.dx = ndx; }
-  this.setChangeY = function (ndy){ this.dy = ndy; }
+  this.setChangeY = function (ndy){ this.dx = ndx; }
   this.setDX = function(newDX){
     this.dx = newDX;
   }
@@ -299,14 +299,7 @@ function Sprite(scene, imageFile, width, height){
     this.calcVector();
   } // end changeMoveAngleBy
 
-  this.getMoveAngle = function(){
-    //moveAngle is stored in radians.
-    //return it in degrees
-    //don't forget we offset the angle by 90 degrees
-    return (this.moveAngle * 180 / Math.PI) + 90;
-  }
-
-    //convenience functions combine move and img angles
+  //convenience functions combine move and img angles
   this.setAngle = function(degrees){
     this.setMoveAngle(degrees);
     this.setImgAngle(degrees);
@@ -346,17 +339,16 @@ function Sprite(scene, imageFile, width, height){
     //collisions only activated when both sprites are visible
     collision = false;
     if (this.visible){
-
       if (sprite.visible){
 	//define borders
-	myLeft = this.x - (this.width / 2);
-	myRight = this.x + (this.width / 2);
-	myTop = this.y - (this.height / 2);
-	myBottom = this.y + (this.height / 2);
-	otherLeft = sprite.x - (sprite.width / 2);
-	otherRight = sprite.x + (sprite.width / 2);
-	otherTop = sprite.y - (sprite.height / 2);
-	otherBottom = sprite.y + (sprite.height / 2);
+	myLeft = this.x;
+	myRight = this.x + this.width;
+	myTop = this.y;
+	myBottom = this.y + this.height;
+	otherLeft = sprite.x;
+	otherRight = sprite.x + sprite.width;
+	otherTop = sprite.y;
+	otherBottom = sprite.y + sprite.height;
 
 	//assume collision
 	collision = true;
@@ -376,8 +368,13 @@ function Sprite(scene, imageFile, width, height){
   } // end collidesWith
 
   this.distanceTo = function(sprite){
-      diffX = this.x - sprite.x;
-      diffY = this.y - sprite.y;
+      //get centers of sprites
+      myX = this.x + (this.width/2);
+      myY = this.y + (this.height/2);
+      otherX = sprite.x + (sprite.width/2);
+      otherY = sprite.y + (sprite.height/2);
+      diffX = myX - otherX;
+      diffY = myY - otherY;
       dist = Math.sqrt((diffX * diffX) + (diffY * diffY));
       return dist;
   } // end distanceTo
@@ -399,53 +396,6 @@ function Sprite(scene, imageFile, width, height){
       return degrees;
   } // end angleTo
 
-  this.isMouseDown = function(){
-    //determines if mouse is clicked on this element
-    mx = this.scene.getMouseX();
-    my = this.scene.getMouseY();
-    sLeft = this.x - (this.width / 2);
-    sRight = this.x + (this.width / 2);
-    sTop = this.y - (this.height / 2);
-    sBottom = this.y + (this.height / 2);
-    hit = false;
-
-    if (mx > sLeft){
-      if (mx < sRight){
-	if (my > sTop){
-	  if (my < sBottom){
-	    if (this.scene.touchable){
-	      //if it's a touchable interface,
-	      //this is a hit
-	      hit = true;
-	    } else {
-	      //for a normal mouse, check for clicked, too
-	      if (this.scene.getMouseClicked()){
-		hit = true;
-	      }
-	    }
-	  }
-	}
-      }
-    }
-    return hit;
-  } // end isMouseDown
-
-  this.isClicked = function(){
-    //eventually return true only when mouse is released;
-    //for now, simply another name for isMouseDown
-    return this.isMouseDown();
-
-    /*
-    hit = false;
-    if (this.isMouseDown()){
-      if (this.released){
-	hit = true;
-      } // end if
-    } // end if
-    return hit;
-    */
-  } // end isClicked
-
   this.setCameraRelative = function( cam ){ this.camera = cam; }
 
   this.report = function(){
@@ -465,7 +415,9 @@ function Scene(){
 
     //dynamically create a canvas element
     this.canvas = document.createElement("canvas");
-    this.canvas.style.backgroundColor = "yellow";
+    this.canvas.style.backgroundColor = "white";
+    this.canvas.style.width = "60%";
+    this.canvas.style.margin = "auto 20% auto 20%";
     document.body.appendChild(this.canvas);
     this.context = this.canvas.getContext("2d");
 
@@ -482,15 +434,6 @@ function Scene(){
       } // end if
       this.intID = setInterval(localUpdate, 50);
       document.onmousemove = this.updateMousePos;
-      document.mouseClicked = false;
-      document.onmousedown = function(){
-	this.mouseDown = true;
-	this.mouseClicked = true;
-      }
-      document.onmouseup = function(){
-	this.mouseDown = false;
-	this.mouseClicked  = false;
-      }
     }
 
     this.stop = function(){
@@ -500,7 +443,6 @@ function Scene(){
     this.updateKeys = function(e){
       //set current key
       currentKey = e.keyCode;
-      //console.log(e.keyCode);
       keysDown[e.keyCode] = true;
     } // end updateKeys
 
@@ -569,10 +511,6 @@ function Scene(){
     this.getMouseY = function(){
       //incorporate offset for canvas position
       return document.mouseY - this.top;
-    }
-
-    this.getMouseClicked = function(){
-      return document.mouseClicked;
     }
 
     this.hide = function(){
@@ -956,7 +894,7 @@ function Animation(spriteSheet, imgWidth, imgHeight, cellWidth, cellHeight){
 	//currentFrame = Math.floor( (this.totalCycleTime % this.animationLength) / this.frameDelta );
 	elTime = this.totalCycleTime % this.animationLength;
 	currentFrame = Math.floor(elTime / this.frameDelta);
-	//console.log(elTime);
+	console.log(elTime);
 
 	//document.getElementById("FPS").innerHTML = this.animationLength;//for debugging
 	row = Math.floor( ( this.currentCycle[1] + currentFrame ) / this.framesPerRow );

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+  <meta charset="UTF-8" />
+  <title>Welcome Page</title>
+  <link rel="stylesheet" type="text/css" href="css/main.css" />
+  <script type="text/javascript" src = "script/simpleGame_modified.js"></script>
+  <script type="text/javascript" src = "script/game.js"></script>
+  <script>
+     var ship;
+    var planet;
+    var game;
+
+    function init(){
+        game = new Scene();
+        ship = new Projectile(game, "images/ship.png", 25, 25);
+        ship.setSpeed(4);
+        ship.setPosition(400, 200);
+        planet = new Projectile(game, "images/ship.png", 50, 50);
+        planet.setSpeed(-1);
+        planet.setPosition(400, 300);
+
+        game.start();
+    } // end init
+
+    function update(){
+        game.clear();
+        checkGravity();
+        planet.update();
+        ship.update();
+    } // end update
+
+    function checkGravity(){
+        GRAVITY_RATIO = 8050;
+        //checks gravity pull of planet on ship
+        PLANET_MASS = 16;
+        SHIP_MASS = 4;
+        dist = ship.distanceTo(planet);
+        dir = planet.angleTo(ship);
+        force = GRAVITY_RATIO * (PLANET_MASS * SHIP_MASS) / (dist * dist)
+        ship.addVector(dir, force / SHIP_MASS);
+        dirPlanet = ship.angleTo(planet);
+        forcePlanet = force;
+        planet.addVector(dirPlanet, forcePlanet / PLANET_MASS);
+    } // end checkGravity
+  </script>
+</head>
+<body onload = "init()">
+
+</body>
+</html>

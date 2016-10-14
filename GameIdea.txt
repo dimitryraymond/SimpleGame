@@ -1,0 +1,13 @@
+Many spheres all affecting each other through gravity
+
+Have a pair of circles spinning against each other
+Objective is to score more points, by causing chaos
+shoot other balls at the pair to influence it
+Get close and make more points
+hit the pair and you lose points
+
+OR
+
+be on a central planet,
+shoot balls into orbit and see how many you can get to stay into orbit,
+bonus points for orbits within orbits
