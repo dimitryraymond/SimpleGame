@@ -428,8 +428,8 @@ function Scene(){
     //dynamically create a canvas element
     this.canvas = document.createElement("canvas");
     this.canvas.style.backgroundColor = "black";
-    this.canvas.style.width = "90%";
-    this.canvas.style.margin = "auto 5% auto 5%";
+    this.canvas.style.width = "86%";
+    this.canvas.style.margin = "auto 7% auto 7%";
     document.body.appendChild(this.canvas);
     this.context = this.canvas.getContext("2d");
 
