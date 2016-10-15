@@ -47,7 +47,7 @@ function GravityRoom(game)
     {
       if(this.projectiles[i].isNearBounds(150)) //within 100 units outside of edge
       {
-        this.projectiles[i].imgAngle = this.projectiles[i].moveAngle + Math.PI / 2;
+        this.projectiles[i].imgAngle = this.projectiles[i].moveAngle;
         this.projectiles[i].update();
       }
       else {
