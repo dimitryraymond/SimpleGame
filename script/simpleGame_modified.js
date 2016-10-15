@@ -189,7 +189,6 @@ function Sprite(scene, imageFile, width, height){
 
   this.isNearBounds = function(tolerance)
   {
-
     if(this.x < -1 * tolerance || this.x > tolerance + this.canvas.width ||
       this.y < -1 * tolerance || this.y > tolerance + this.canvas.height
     ){
@@ -428,9 +427,9 @@ function Scene(){
 
     //dynamically create a canvas element
     this.canvas = document.createElement("canvas");
-    this.canvas.style.backgroundColor = "white";
-    this.canvas.style.width = "100%";
-    this.canvas.style.margin = "auto 0% auto 0%";
+    this.canvas.style.backgroundColor = "black";
+    this.canvas.style.width = "90%";
+    this.canvas.style.margin = "auto 5% auto 5%";
     document.body.appendChild(this.canvas);
     this.context = this.canvas.getContext("2d");
 

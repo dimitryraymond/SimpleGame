@@ -7,10 +7,17 @@
   <script type="text/javascript" src = "script/simpleGame_modified.js"></script>
   <script type="text/javascript" src = "script/game.js"></script>
   <script>
-    var ship;
+    //game conditions
+    var wonNotified = false;
+    var lostNotified = false;
+
+    //game assets
+    var ship1;
+    var ship2;
     var planet;
     var game;
     var gravityRoom;
+    var background;
 
     //for canvas size
     var canvasBounds;
@@ -19,32 +26,70 @@
 
     function init(){
         game = new Scene();
-        ship = new Projectile(game, "images/ship.png", 16, 16);
-        ship.setSpeed(6);
-        ship.setPosition(1000, 200);
-        ship2 = new Projectile(game, "images/ship.png", 50, 50);
-        ship2.setSpeed(-2);
-        ship2.setPosition(1000, 500);
-        ship2.mass = 200;
+        background = new Sprite(game, "images/spaceBackground.jpg", 4000, 2000);
+        background.setPosition(0, 0);
+        background.setSpeed(0);
+        background.update();
+        ship1 = new Projectile(game, "images/ship.png", 16, 16);
+        ship1.setSpeed(8);
+        ship1.setPosition(1000, 200);
+        ship2 = new Projectile(game, "images/ship.png", 16, 16);
+        ship2.setSpeed(-8);
+        ship2.setPosition(1000, 800);
+        planet = new Projectile(game, "images/sun.png", 200, 200);
+        planet.setSpeed(0);
+        planet.setPosition(1000, 500);
+        planet.mass = 400;
+        planet.affectedByGravity = true;
         gravityRoom = new GravityRoom(game);
-        gravityRoom.projectiles = [ship, ship2];
+        gravityRoom.projectiles = [planet, ship1, ship2];
 
         canvasBounds = game.canvas.getBoundingClientRect();
         widthRatio = game.canvas.width / canvasBounds.width;
         heightRatio = game.canvas.height / canvasBounds.height;
 
         game.start();
+
+        //set game status
+        document.getElementById('gameStatus').innerHTML = "Game Status: Playing";
     } // end init
 
     function update(){
         game.clear();
-        //checkGravity();
+        background.update();
         gravityRoom.applyGravity();
         gravityRoom.updateAllProjectiles();
+        if(!(wonNotified || lostNotified))
+        {
+          checkWinCondition();
+        }
+        displaySpeed();
+
     } // end update
 
+    function checkWinCondition()
+    {
+      if(planet.getSpeed() > 20)
+      {
+        wonNotified = true;
+        alert("Congrats! You won!");
+        document.getElementById('gameStatus').innerHTML = "Game Status: Won!";
+      }
+      if(!planet.isNearBounds(100))
+      {
+        lostNotified = true;
+        alert("Sorry, you lost the sun too early.");
+        document.getElementById('gameStatus').innerHTML = "Game Status: Lost";
+      }
+    }
+
+    function displaySpeed()
+    {
+      document.getElementById('currentSpeed').innerHTML = "Current Speed: " + planet.getSpeed();
+    }
+
     document.addEventListener("mousedown", function(event){
-      var size = Math.floor((Math.random() * 100) + 10);
+      var size = Math.floor((Math.random() * 50) + 10);
       if(Math.random() < 0.03) //spawn mothership at 3% chance
         size = 300;
       var mass = size * size / 50;
@@ -59,6 +104,12 @@
   </script>
 </head>
 <body onload = "init()">
-
+<div id='description' class="centered">
+  The goal is to launch the sun off the screen at at least 20 pixels / second!
+</div>
+<div id='currentSpeed'>
+</div>
+<div id='gameStatus'>
+</div>
 </body>
 </html>

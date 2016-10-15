@@ -10,8 +10,7 @@ body {
   padding-left: 6%;
   padding-right: 6%;
 }
-#myCanvas{
-  width: 100%;
-  margin: auto auto;
-  background-color: white;
+#centered{
+  width: 90%;
+  margin: auto 5% auto 5%;
 }
