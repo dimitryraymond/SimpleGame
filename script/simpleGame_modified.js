@@ -187,6 +187,19 @@ function Sprite(scene, imageFile, width, height){
     }
   } // end checkbounds
 
+  this.isNearBounds = function(tolerance)
+  {
+
+    if(this.x < -1 * tolerance || this.x > tolerance + this.canvas.width ||
+      this.y < -1 * tolerance || this.y > tolerance + this.canvas.height
+    ){
+      return false;
+    }
+    else {
+      return true;
+    }
+  }
+
   this.loadAnimation = function (imgWidth, imgHeight, cellWidth, cellHeight){
     this.animation = new Animation(this.image, imgWidth, imgHeight, cellWidth, cellHeight);
 	this.animation.setup();
@@ -416,8 +429,8 @@ function Scene(){
     //dynamically create a canvas element
     this.canvas = document.createElement("canvas");
     this.canvas.style.backgroundColor = "white";
-    this.canvas.style.width = "60%";
-    this.canvas.style.margin = "auto 20% auto 20%";
+    this.canvas.style.width = "100%";
+    this.canvas.style.margin = "auto 0% auto 0%";
     document.body.appendChild(this.canvas);
     this.context = this.canvas.getContext("2d");
 
@@ -521,9 +534,7 @@ function Scene(){
       this.canvas.style.display = "block";
     }
 
-    this.setSize(800, 600);
-    this.setPos(10, 10);
-    this.setBG("lightgray");
+    this.setSize(2000, 1000);
 
 } // end Scene class def
 

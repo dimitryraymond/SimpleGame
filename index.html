@@ -7,26 +7,31 @@
   <script type="text/javascript" src = "script/simpleGame_modified.js"></script>
   <script type="text/javascript" src = "script/game.js"></script>
   <script>
-     var ship;
+    var ship;
     var planet;
     var game;
     var gravityRoom;
 
+    //for canvas size
+    var canvasBounds;
+    var widthRatio;
+    var heightRatio;
+
     function init(){
         game = new Scene();
         ship = new Projectile(game, "images/ship.png", 16, 16);
-        ship.setSpeed(8);
-        ship.setPosition(400, 200);
-        ship2 = new Projectile(game, "images/ship.png", 16, 16);
-        ship2.setSpeed(-8);
-        ship2.setPosition(400, 400);
-        planet = new Projectile(game, "images/ship.png", 50, 50);
-        planet.setSpeed(-2);
-        planet.setPosition(400, 300);
-        planet.mass = 100;
-        gravityRoom = new GravityRoom();
-        gravityRoom.projectiles = [ship, ship2, planet];
+        ship.setSpeed(6);
+        ship.setPosition(1000, 200);
+        ship2 = new Projectile(game, "images/ship.png", 50, 50);
+        ship2.setSpeed(-2);
+        ship2.setPosition(1000, 500);
+        ship2.mass = 200;
+        gravityRoom = new GravityRoom(game);
+        gravityRoom.projectiles = [ship, ship2];
 
+        canvasBounds = game.canvas.getBoundingClientRect();
+        widthRatio = game.canvas.width / canvasBounds.width;
+        heightRatio = game.canvas.height / canvasBounds.height;
 
         game.start();
     } // end init
@@ -38,6 +43,19 @@
         gravityRoom.updateAllProjectiles();
     } // end update
 
+    document.addEventListener("mousedown", function(event){
+      var size = Math.floor((Math.random() * 100) + 10);
+      if(Math.random() < 0.03) //spawn mothership at 3% chance
+        size = 300;
+      var mass = size * size / 50;
+      var newShip = new Projectile(game, "images/ship.png", size, size);
+      var x = (event.clientX - canvasBounds.left) * widthRatio;
+      var y = (event.clientY - canvasBounds.top) * heightRatio;
+      newShip.setPosition(x, y);
+      newShip.setSpeed(0);
+      newShip.mass = mass;
+      gravityRoom.addProjectile(newShip);
+    }, false);
   </script>
 </head>
 <body onload = "init()">

@@ -5,10 +5,11 @@ function Projectile(game, image, width, height){
   tProjectile.radius = (width + height) / 2; //1.4142 is sqrt(2)
   tProjectile.affectedByGravity = true;
   tProjectile.projectsGravity = true;
+
   return tProjectile;
 } // object definition
 
-function GravityRoom()
+function GravityRoom(game)
 {
   this.GRAVITY_RATIO = 100;
   this.projectiles = [];
@@ -42,24 +43,30 @@ function GravityRoom()
 
   this.updateAllProjectiles = function()
   {
-    for(var i = 0; i < this.projectiles.length; i++)
+    for(var i = this.projectiles.length - 1; i > -1; i--)
     {
-      this.projectiles[i].update();
+      if(this.projectiles[i].isNearBounds(100)) //within 100 units outside of edge
+      {
+        this.projectiles[i].imgAngle = this.projectiles[i].moveAngle + Math.PI / 2;
+        this.projectiles[i].update();
+      }
+      else {
+        this.removeProjectile(this.projectiles[i]);
+      }
+    }
+  }
+
+  this.addProjectile = function(projectile)
+  {
+    this.projectiles.push(projectile);
+  }
+
+  this.removeProjectile = function(projectile)
+  {
+    var index = this.projectiles.indexOf(projectile);
+    if(index > -1)
+    {
+      var removed = this.projectiles.splice(index, 1);
     }
   }
 }
-
-//Thank you very much Andy Harris for the started code to this (in case my teacher wants to sue me for copyright hehe)
-// function checkGravity(){
-//     GRAVITY_RATIO = 500;
-//     //checks gravity pull of planet on ship
-//     PLANET_MASS = 16;
-//     SHIP_MASS = 4;
-//     dist = ship.distanceTo(planet);
-//     dir = planet.angleTo(ship);
-//     force = GRAVITY_RATIO * (PLANET_MASS * SHIP_MASS) / (dist * dist)
-//     ship.addVector(dir, force / SHIP_MASS);
-//     dirPlanet = ship.angleTo(planet);
-//     forcePlanet = force;
-//     planet.addVector(dirPlanet, forcePlanet / PLANET_MASS);
-// } // end checkGravity
